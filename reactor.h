@@ -1,7 +1,7 @@
 #ifndef _H_REACTOR
 #define _H_REACTOR
 #include<vector.h>
-#include<event.h>
+#include"event.h"
 class Reactor
 {
 	public:
@@ -14,7 +14,7 @@ class Reactor
 	ePoll &poll;//这里面返回的时候是通过处理event_handler中的status来的
 	//这里得需要对event_list进行加锁的工作
 	void HandleEvents();
-	bool HandleTime();//这个函数名视乎要该，IsEventTimerOut()
+//	bool HandleTime();//这个函数名视乎要该，IsEventTimerOut()
 	pthread_cond_t event_cond;
 	pthread_mutex event_mutex;
 	std::vector<EventHandler *> event_list;
