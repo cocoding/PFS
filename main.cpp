@@ -1,17 +1,17 @@
 #include"reactor.h"
 #include"event.h"
-#include"sockaddress.h"
-#include<iosteram>
+#include"sockaddr.h"
+#include<iostream>
 void init_server()
 {
-	SockAddress sa("127.0.0.1",3232);
-	AcceptorHandler *acceptor=new AcceptorHandler(sa);
+	SockAddr *sa=new SockAddr("127.0.0.1",3232);
+	Acceptor *acceptor=new Acceptor(*sa);
 }
 int main()
 {
 
-		ePoll poll();
-		g_reactor.Intance()->SetPoll(&Poll);
+		ePoll poll;
+		g_reactor.Instance()->SetPoll(&poll);
 		init_server();
 		g_reactor.Instance()->Poll();
 		return 0;

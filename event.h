@@ -1,7 +1,7 @@
 #ifndef _H_EVENT
 #define _H_EVENT
 #include"sockaddr.h"
-#include<assert.h>
+#include"global.h"
 ///变量 小写加下划线，类名大写，函数名大写
 typedef int Sock;
 enum  TYPE
@@ -20,7 +20,7 @@ class EventHandler
 {
 	public:
 	EventHandler(Sock _fd);//,Time _alarm_time);//这里对于acceptor来说_fd是-1代表的是以后会再次设置的
-	Sock GetSock();//这个函数的必要性.主要是用于epool
+	virtual Sock GetSock();//这个函数的必要性.主要是用于epool
 	virtual void HandleRead();
 	virtual bool SetSock(Sock _sock_fd);
 	virtual void HandleWrite();
@@ -39,10 +39,10 @@ class EventHandler
 		TYPE type;
 
 };
-class AcceptorHandler:public EventHandler
+class Acceptor:public EventHandler
 {
 	public:
-		AcceptorHandler(SockAddr &_listen_addr);//,Time alarm=NULL)//这个先这样吧
+		Acceptor(SockAddr &_listen_addr);//,Time alarm=NULL)//这个先这样吧
 		void InitAcceptor();
 		void HandleRead();//需要重写这个函数
 	private:

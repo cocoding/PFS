@@ -1,26 +1,31 @@
-#include"Reactor.h"
-#include"event.h"
+#include"reactor.h"
 Reactor::Reactor()
 {
-	event_cond=PTHREAD_COND_INITIALIER;
-	event_mutex=PTHREAD_MUTEX_INITIALIER;
-	poll=NULL;
 }
+void Reactor::InitReactor()
+{
+	event_cond=PTHREAD_COND_INITIALIZER;//??
+	event_mutex=PTHREAD_MUTEX_INITIALIZER;
+	poll=NULL;
+
+}
+	
+
 int Reactor::RegisterEvent(EventHandler*event_handler)
 {//这里可能会出现问题，就是如果一开始的时候出现就使用registerEvent的话，会出现问题的/e/////////////
 	
 	event_handler->SetStatus(WAIT);
 
 	pthread_mutex_lock(&event_mutex);
-	pthread_cond_wait(&event_cond);
+	pthread_cond_wait(&event_cond,&event_mutex);
 
-	event_list.append(event_handler);
+	event_list.push_back(event_handler);
 	
 }
 void Reactor::SetPoll(ePoll *_poll)
 {
-	assert(poll!=NULL)
-		poll=_poll;
+	assert(poll!=NULL);
+	poll=_poll;
 }
 void Reactor::Poll()
 {
@@ -105,19 +110,19 @@ void  ePoll::Poll(vector<EventHandler *>&event_list)
 																		env->data.fd=sock_fd;
 																	  epoll_ctl(poll_fd, EPOLL_CTL_ADD,sock_fd,env);
 								 }
-							int fds=epoll_wait(poll_fd,p_events,even_num,1000);
+							int fds=epoll_wait(poll_fd,p_events,eventNum,1000);
 								for(int i=0;i<fds;i++)
 										{
 													if(p_events[i].events&EPOLLIN)
 																{
-																				EventHandler* tmpEvent=static_cast<EventHandler*>p_events[i].data.ptr;
+																				EventHandler* tmpEvent=static_cast<EventHandler*>(p_events[i].data.ptr);
 																				tmpEvent->SetStatus(READ);
 																				continue;
 																}
 															else
 													if(p_events[i].events&EPOLLRDHUP)
 																{
-																				EventHandler* tmpEvent=static_cast<EventHandler*>p_events[i].data.ptr;
+																				EventHandler* tmpEvent=static_cast<EventHandler*>(p_events[i].data.ptr);
 																				tmpEvent->SetStatus(DEAD);
 																				continue;
 																}

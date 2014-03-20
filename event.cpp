@@ -1,5 +1,4 @@
 #include"event.h"
-
 Acceptor::Acceptor(SockAddress &_listen_addr/*,Time _alarm=NULL*/):Event_handler(-1,/*_alarm*/),listen_address(_listen_addr)
 {
 	InitAcceptor();
@@ -7,7 +6,7 @@ Acceptor::Acceptor(SockAddress &_listen_addr/*,Time _alarm=NULL*/):Event_handler
 }
 void Acceptor::InitAcceptor()
 {
-	SetType(ACCEPTOR);//enum 的使用方法不知道是否正确;
+	SetEventType(ACCEPTOR);//enum 的使用方法不知道是否正确;
 	sock_fd=socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in sin;
 	sin.sin_family=AF_INET;

@@ -1,5 +1,6 @@
 #ifndef _H_REACTOR
 #define _H_REACTOR
+#include<vector>
 #include"event.h"
 #include"global.h"
 using namespace std;
