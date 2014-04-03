@@ -7,9 +7,9 @@
 //}
 
 extern G_Reactor g_reactor;
-LogHandler::LogHandler(Sock sock_fd):EventHandler(sock_fd)
+LogHandler::LogHandler(Sock sock_fd,TYPE t=LOGGER):EventHandler(sock_fd,t)
 {
-	SetEventType(LOGGER);
+
 }
 void Acceptor::HandleDropOut()
 { 
@@ -29,7 +29,7 @@ void LogHandler::HandleRead()
 }
 void Acceptor::InitAcceptor()
 {
-	SetEventType(ACCEPTOR);//enum 的使用方法不知道是否正确;
+	//SetEventType(ACCEPTOR);//enum 的使用方法不知道是否正确;
 	int _sock_fd=socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in sin;
 	sin.sin_family=AF_INET;
@@ -57,8 +57,9 @@ void Acceptor::HandleRead()
 		std::cout<<"HandlerRead"<<endl;
 }
 
-EventHandler::EventHandler(Sock _fd/*,Time *_alarm_time*/)
+EventHandler::EventHandler(Sock _fd,TYPE t/*,Time *_alarm_time*/)
 {
+	type=t;
 	//alarm_time=_alarm_time;
 	if(_fd!=-1)
 	{
@@ -67,6 +68,7 @@ EventHandler::EventHandler(Sock _fd/*,Time *_alarm_time*/)
 	}
 	else
 	sock_fd=-1;
+
 	//alarm_time=_alarm_time;
 }
 void EventHandler::SetEventType(TYPE t)

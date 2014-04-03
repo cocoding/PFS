@@ -20,7 +20,7 @@ enum STATUS
 class EventHandler
 {
 	public:
-	EventHandler(Sock _fd);//,Time _alarm_time);//这里对于acceptor来说_fd是-1代表的是以后会再次设置的
+	EventHandler(Sock _fd,TYPE t);//,Time _alarm_time);//这里对于acceptor来说_fd是-1代表的是以后会再次设置的
 	Sock GetSock();//这个函数的必要性.主要是用于epool
 	virtual void HandleRead(){
 	}
@@ -45,7 +45,7 @@ class EventHandler
 class Acceptor:public EventHandler
 {
 	public:
-	Acceptor(SockAddr & _listen_addr):EventHandler(-1),listen_address(_listen_addr)
+	Acceptor(SockAddr & _listen_addr,TYPE t=ACCEPTOR):EventHandler(-1,t),listen_address(_listen_addr)
 	{
 			InitAcceptor();
 				 //SetAlarmTime(_alarm);
@@ -54,13 +54,13 @@ class Acceptor:public EventHandler
 	void HandleRead();//需要重写这个函数
 	void HandleDropOut();
 	private:
-		int Type;//这里主要是用于区别接受信号的和接受数据的 enum类型
+		//int Type;//这里主要是用于区别接受信号的和接受数据的 enum类型
 		SockAddr &listen_address;
 };
 class LogHandler:public EventHandler
 {
 	public:
-			LogHandler(/*SockAddress &sock_addr,*/Sock _sock_fd);//前面是否需要
+			LogHandler(/*SockAddress &sock_addr,*/Sock _sock_fd,TYPE t);//前面是否需要
 			void HandleRead();
 			void HandleDropOut();
 };

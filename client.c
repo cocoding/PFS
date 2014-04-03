@@ -7,7 +7,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 int main(int argc,char *argv[]){
-
+while(1)
+{
 int sockfd;
 
 sockfd=socket(AF_INET,SOCK_STREAM,0);
@@ -36,4 +37,5 @@ if(num<0)
 //printf("send%d\n",num);
 sleep(10);
 close(sockfd);
+}
 }

@@ -96,7 +96,7 @@ void Reactor::HandleEvents()
 		}
 		if(status==DEAD)
 		{
-			(*event_iter)->HandleDropOut();
+			(*event_iter)->HandleDropOut(); 
 		}
 		if(status==WAIT)
 			continue;
@@ -122,47 +122,46 @@ ePoll::ePoll()
 void  ePoll::Poll(vector<EventHandler *>&event_list)
 {
 		int eventNum=event_list.size();
-			int poll_fd=epoll_create(eventNum);
-				struct epoll_event *p_events =new epoll_event[eventNum];//这里在哪里进行释放还是个问题
+		int poll_fd=epoll_create(eventNum);
+		struct epoll_event *p_events =new epoll_event[eventNum];//这里在哪里进行释放还是个问题
 					
-					vector<EventHandler*>::iterator event_iter=event_list.begin();
-						for(;event_iter<event_list.end();event_iter++)
-								{
-											(*event_iter)->SetStatus(WAIT);
-													struct epoll_event *env=(struct epoll_event*)malloc(sizeof(struct epoll_event));//这里这块内存不是很好回收，还是让它使用上面的数组？？
-															if((*event_iter)->GetEventType()==ACCEPTOR)//acceptor
-																		{
-																						env->events=EPOLLIN;
-																		}
-																	else
-															if((*event_iter)->GetEventType()==LOGGER)//reader///////////////
-																		{
-																					  env->events=EPOLLIN|EPOLLET;
-																		}
-																		env->data.ptr=(void *)(*event_iter);//这里是必须的
-																		Sock sock_fd=(*event_iter)->GetSock();
+		vector<EventHandler*>::iterator event_iter=event_list.begin();
+		for(;event_iter<event_list.end();event_iter++)
+		{
+					(*event_iter)->SetStatus(WAIT);
+					struct epoll_event *env=(struct epoll_event*)malloc(sizeof(struct epoll_event));//这里这块内存不是很好回收，还是让它使用上面的数组？？
+					if((*event_iter)->GetEventType()==ACCEPTOR)//acceptor
+						{
+									env->events=EPOLLIN;
+						}
+						else
+					if((*event_iter)->GetEventType()==LOGGER)//reader///////////////
+						{
+								  env->events=EPOLLIN|EPOLLRDHUP;
+						}
+						env->data.ptr=(void *)(*event_iter);//这里是必须的
+						Sock sock_fd=(*event_iter)->GetSock();
 																		//env->data.fd=sock_fd;
-																	  epoll_ctl(poll_fd, EPOLL_CTL_ADD,sock_fd,env);
-								 }
-							int fds=epoll_wait(poll_fd,p_events,eventNum,1000);
-								for(int i=0;i<fds;i++)
-										{
-													if(p_events[i].events&EPOLLIN)
-																{
-																				EventHandler* tmpEvent=static_cast<EventHandler*>(p_events[i].data.ptr);
-																				tmpEvent->SetStatus(READ);
-																				continue;
-																}
-															else
+						epoll_ctl(poll_fd, EPOLL_CTL_ADD,sock_fd,env);
+		 }
+			int fds=epoll_wait(poll_fd,p_events,eventNum,1000);
+			for(int i=0;i<fds;i++)
+			{
 													if(p_events[i].events&EPOLLRDHUP)
-																{
+													{
 																				EventHandler* tmpEvent=static_cast<EventHandler*>(p_events[i].data.ptr);
 																				tmpEvent->SetStatus(DEAD);
 																				continue;
-																}
-										}
-							delete[] p_events;
-							return ;
+													}
+													if(p_events[i].events&EPOLLIN)
+													{
+																				EventHandler* tmpEvent=static_cast<EventHandler*>(p_events[i].data.ptr);
+																				tmpEvent->SetStatus(READ);
+																				continue;
+													}
+			}
+			delete[] p_events;
+			return ;
 									//下面是删除这块内存.上面还有分配的内存不能被删除
 									//上面还有分配的内存不能被删除delete[] p_events;
 		
