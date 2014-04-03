@@ -124,25 +124,26 @@ void  ePoll::Poll(vector<EventHandler *>&event_list)
 		int eventNum=event_list.size();
 		int poll_fd=epoll_create(eventNum);
 		struct epoll_event *p_events =new epoll_event[eventNum];//这里在哪里进行释放还是个问题
-					
+		int event_index=0;	
 		vector<EventHandler*>::iterator event_iter=event_list.begin();
 		for(;event_iter<event_list.end();event_iter++)
-		{
+		{ 
 					(*event_iter)->SetStatus(WAIT);
-					struct epoll_event *env=(struct epoll_event*)malloc(sizeof(struct epoll_event));//这里这块内存不是很好回收，还是让它使用上面的数组？？
+		//			struct epoll_event *env=(struct epoll_event*)malloc(sizeof(struct epoll_event));//这里这块内存不是很好回收，还是让它使用上面的数组？？
 					if((*event_iter)->GetEventType()==ACCEPTOR)//acceptor
 						{
-									env->events=EPOLLIN;
+									p_events[event_index].events=EPOLLIN;
 						}
 						else
 					if((*event_iter)->GetEventType()==LOGGER)//reader///////////////
 						{
-								  env->events=EPOLLIN|EPOLLRDHUP;
+								  p_events[event_index].events=EPOLLIN|EPOLLRDHUP;
 						}
-						env->data.ptr=(void *)(*event_iter);//这里是必须的
+						p_events[event_index].data.ptr=(void *)(*event_iter);//这里是必须的
 						Sock sock_fd=(*event_iter)->GetSock();
 																		//env->data.fd=sock_fd;
-						epoll_ctl(poll_fd, EPOLL_CTL_ADD,sock_fd,env);
+						epoll_ctl(poll_fd, EPOLL_CTL_ADD,sock_fd,&(p_events[event_index]));
+						event_index++;
 		 }
 			int fds=epoll_wait(poll_fd,p_events,eventNum,1000);
 			for(int i=0;i<fds;i++)
