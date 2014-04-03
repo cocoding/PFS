@@ -2,9 +2,12 @@
 #include"event.h"
 #include"sockaddr.h"
 #include<iostream>
+#include<string>
+extern G_Reactor g_reactor;
 void init_server()
 {
-	SockAddr *sa=new SockAddr("127.0.0.1",3232);
+	string str("127.0.0.1");
+	SockAddr *sa=new SockAddr(str,5656);
 	Acceptor *acceptor=new Acceptor(*sa);
 }
 int main()

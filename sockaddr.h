@@ -5,7 +5,11 @@ using namespace std;
 class SockAddr
 {
 		public:
-				SockAddr(string ip_addr,int port);
+				SockAddr(string ip_addr,int _port)
+				{
+						ip=ip_addr;
+						port=_port;
+				}
 				string GetIp()
 				{
 						return ip;
