@@ -68,7 +68,6 @@ EventHandler::EventHandler(Sock _fd,TYPE t/*,Time *_alarm_time*/)
 	}
 	else
 	sock_fd=-1;
-
 	//alarm_time=_alarm_time;
 }
 void EventHandler::SetEventType(TYPE t)

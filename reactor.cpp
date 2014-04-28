@@ -4,6 +4,7 @@ class EventHandler;
 G_Reactor g_reactor;
 Reactor::Reactor()
 {
+
 }
 void Reactor::InitReactor()
 {
@@ -13,12 +14,10 @@ void Reactor::InitReactor()
 
 }
 	
-
 int Reactor::RegisterEvent(EventHandler* event_handler)
 {//这里可能会出现问题，就是如果一开始的时候出现就使用registerEvent的话，会出现问题的/e/////////////
 	
 	event_handler->SetStatus(WAIT);
-
 //	pthread_mutex_lock(&event_mutex);这里还是不先使用锁了吧，有点问题
 //	pthread_cond_wait(&event_cond,&event_mutex);
 
